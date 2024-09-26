@@ -56,7 +56,7 @@ export default function SignUpPage() {
             if (response.status === 201) {
                 toast.success(response.data.message ?? "Account created successfully.")
                 form.reset()
-                router.replace('/logn-in')
+                router.replace('/log-in')
             }
 
 

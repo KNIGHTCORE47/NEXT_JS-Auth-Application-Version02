@@ -44,7 +44,7 @@ export default function LogInPage() {
         setIsSubmiting(true)
 
         try {
-            const response = await axios.post('/api/users/sign-up', data)
+            const response = await axios.post('/api/users/log-in', data)
 
             if (!response) {
                 console.log("Something went wrong, please try again later.");
