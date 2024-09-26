@@ -60,7 +60,7 @@ export default function LogInPage() {
 
 
         } catch (error) {
-            console.log("Error signing up", error)
+            console.log("Error logging in", error)
             const axiosError = error as AxiosError<ApiResponse>
 
             toast.error(axiosError?.response?.data.message ?? "An unexpected error occurred")
