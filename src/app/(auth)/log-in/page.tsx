@@ -52,11 +52,12 @@ export default function LogInPage() {
 
             }
 
-            if (response.status === 201) {
-                toast.success(response.data.message ?? "Account created successfully.")
-                form.reset()
-                router.replace(`/profile/${response.data.data.username}`)
+
+            if (response.status === 200) {
+                toast.success(response.data.message ?? "Login successful.");
+                router.replace("/profile")
             }
+
 
 
         } catch (error) {
@@ -67,6 +68,7 @@ export default function LogInPage() {
 
         } finally {
             setIsSubmiting(false)
+            form.reset()
         }
 
     }
