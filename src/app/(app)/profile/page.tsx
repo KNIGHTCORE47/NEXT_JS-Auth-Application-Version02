@@ -32,7 +32,7 @@ function page() {
                 );
             } else if (response.status === 200) {
                 setUserId(response.data.data?._id)
-                toast.success(response.data.message ?? "Logged out successfully")
+                toast.success(response.data.data.message ?? "User fetched successfully")
 
             }
 
