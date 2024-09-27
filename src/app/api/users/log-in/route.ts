@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
             id: existingUser._id,
             username: existingUser.username,
             email: existingUser.email,
+            password: existingUser.password,
             isVerified: existingUser.isVerified
         };
 
