@@ -56,6 +56,10 @@ function page() {
 
             <hr />
 
+            <h1 className='text-xl text-center'>{"User Id"}</h1>
+
+            <hr />
+
             <div className='grid grid-cols-2 gap-x-4'>
                 <Button
                     onClick={() => { }}
