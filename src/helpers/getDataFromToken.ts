@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import JWT from 'jsonwebtoken'
 
+
+interface TokenData {
+    id: string,
+    username: string,
+    email: string,
+    password: string,
+    isVerified: boolean
+}
+
 export default function grabTokenData(request: NextRequest) {
 
     const token = request.cookies.get("token")?.value ?? ""
@@ -9,19 +18,13 @@ export default function grabTokenData(request: NextRequest) {
     try {
 
         if (!token) {
-
             return NextResponse.json({
                 success: false,
                 message: "No token found"
             }, { status: 404 })
         }
 
-        const decodedToken = JWT.verify(token, tokenSecret) as {
-            id: string,
-            username: string,
-            email: string,
-            isVerified: boolean
-        }
+        const decodedToken = JWT.verify(token, tokenSecret) as TokenData
 
         if (!decodedToken?.id && !decodedToken) {
 
@@ -31,17 +34,7 @@ export default function grabTokenData(request: NextRequest) {
             }, { status: 401 })
         }
 
-        const response = NextResponse.json({
-            success: true,
-            message: "Token found",
-        }, { status: 200 })
-
-        return {
-            ...response,
-            userId: decodedToken?.id
-        }
-
-
+        return decodedToken.id;
 
     } catch (error) {
         console.log("Error getting token data", error);
