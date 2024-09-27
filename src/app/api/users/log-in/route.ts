@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         }
 
         //NOTE - Generate JWT token
-        const tokenSecret = String(process.env.JWT_SECRET);
+        const tokenSecret = String(process.env.NEXT_PUBLIC_TOKEN_SECRET!) ?? "";
         const tokenPayload = {
             id: existingUser._id,
             username: existingUser.username,
