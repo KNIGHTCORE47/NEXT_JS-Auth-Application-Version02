@@ -5,17 +5,49 @@ import { Button } from '@/components/ui/button'
 import axios, { AxiosError } from 'axios'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Ellipsis, Loader2 } from 'lucide-react'
 import { ApiResponse } from '@/types/apiResponse'
+import Link from 'next/link'
 
 
 function page() {
     const router = useRouter();
 
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [userId, setUserId] = React.useState<string>("");
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLogOut, setIsLogOut] = React.useState<boolean>(false);
+
+    async function handleUserInfo() {
+        setIsLoading(true)
+        setUserId("")
+
+        try {
+            const response = await axios.get('/api/profile')
+
+            if (!response) {
+                console.log("Something went wrong, please try again later.");
+
+                toast.error(
+                    "Something went wrong, please try again later."
+                );
+            } else if (response.status === 200) {
+                setUserId(response.data.data?._id)
+                toast.success(response.data.message ?? "Logged out successfully")
+
+            }
+
+        } catch (error) {
+            console.log("Error getting user info", error);
+            const axiosError = error as AxiosError<ApiResponse>;
+
+            toast.error(axiosError?.response?.data.message ?? "An unexpected error occurred")
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     async function handleUserLogout() {
-        setIsLoading(true)
+        setIsLogOut(true)
 
         try {
             const response = await axios.get('/api/users/log-out')
@@ -39,7 +71,8 @@ function page() {
             const axiosError = error as AxiosError<ApiResponse>;
 
             toast.error(axiosError?.response?.data.message ?? "An unexpected error occurred")
-
+        } finally {
+            setIsLogOut(false)
         }
 
     }
@@ -56,14 +89,31 @@ function page() {
 
             <hr />
 
-            <h1 className='text-xl text-center'>{"User Id"}</h1>
+            <h1 className='text-xl text-center'>
+                {
+                    userId === "" ? (
+                        <>
+                            <span className='flex items-center justify-center gap-2'>
+                                Fetching user<Ellipsis className='w-6 h-6 animate-bounce' />
+                            </span>
+                        </>
+                    ) : (
+                        <Link
+                            href={`/profile/${userId}`}
+                            className='text-center hover:text-gray-400 duration-300'
+                        >
+                            {userId}
+                        </Link>
+                    )
+                }
+            </h1>
 
             <hr />
 
             <div className='grid grid-cols-2 gap-x-4'>
                 <Button
-                    onClick={() => { }}
-                    className='bg-gray-500 hover:bg-gray-600'
+                    onClick={handleUserInfo}
+                    className='bg-gray-500 hover:bg-gray-600 font-semibold'
                 >
                     {
                         isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : "Get User"}
@@ -71,10 +121,10 @@ function page() {
 
                 <Button
                     onClick={handleUserLogout}
-                    className='bg-red-500 hover:bg-red-600'
+                    className='font-semibold bg-red-500 hover:bg-red-600'
                 >
                     {
-                        isLoading ? <Loader2 className='w-4 h-4 animate-spin' /> : "Log out"
+                        isLogOut ? <Loader2 className='w-4 h-4 animate-spin' /> : "Log out"
                     }
                 </Button>
             </div>
