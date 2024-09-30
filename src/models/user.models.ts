@@ -7,10 +7,10 @@ export interface User extends mongoose.Document {
     password: string;
     isAdmin: string;
     isVerified: boolean
-    forgotPasswordToken: string;
-    forgotPasswordExpiry: Date;
-    verifyToken: string;
-    verifyTokenExpiry: Date;
+    forgotPasswordToken: string | undefined | null;
+    forgotPasswordExpiry: Date | undefined | null;
+    verifyToken: string | undefined | null;
+    verifyTokenExpiry: Date | undefined | null;
 }
 
 const userSchema = new mongoose.Schema({
