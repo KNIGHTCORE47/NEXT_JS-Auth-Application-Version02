@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from '@/lib/dbConfig'
 import User from '@/models/user.models'
 import bycryptjs from 'bcryptjs'
+import { sendEmail } from "@/helpers/nodeMailer";
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -45,17 +46,29 @@ export async function POST(request: NextRequest) {
                 }, { status: 409 });
 
             } else {
-                const salt = await bycryptjs.genSalt(10);
-                const hashedPassword = await bycryptjs.hash(password, salt);
 
-                existingUserWithEmail.password = hashedPassword;
-
-                await existingUserWithEmail.save();
+                await sendEmail({
+                    email,
+                    emailType: "VERIFY",
+                    userId: String(existingUserWithEmail._id)
+                })
 
                 return NextResponse.json({
                     success: true,
-                    message: "User Information updated successfully"
-                }, { status: 201 });
+                    message: "Verification email sent. Please check your inbox."
+                }, { status: 200 });
+
+                // const salt = await bycryptjs.genSalt(10);
+                // const hashedPassword = await bycryptjs.hash(password, salt);
+
+                // existingUserWithEmail.password = hashedPassword;
+
+                // await existingUserWithEmail.save();
+
+                // return NextResponse.json({
+                //     success: true,
+                //     message: "User Information updated successfully"
+                // }, { status: 201 });
 
             }
         } else {
@@ -75,9 +88,17 @@ export async function POST(request: NextRequest) {
 
                 const savedUser = await user.save();
 
+                //NOTE - Send email verification for verify email
+                await sendEmail({
+                    email,
+                    emailType: "VERIFY",
+                    userId: String(savedUser._id)
+                })
+
+
                 return NextResponse.json({
                     success: true,
-                    message: "User created successfully",
+                    message: "User created successfully. Please check your inbox.",
                     savedUser
                 }, { status: 201 });
             }
