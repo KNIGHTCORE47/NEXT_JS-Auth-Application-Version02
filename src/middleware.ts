@@ -9,6 +9,7 @@ export async function middleware(request: NextRequest) {
     if (token && (
         currentUrl.pathname === "/" ||
         currentUrl.pathname === "/sign-up" ||
+        currentUrl.pathname === "/verifyemail" ||
         currentUrl.pathname === "/log-in" ||
         currentUrl.pathname === "/log-out"
     )
@@ -32,6 +33,7 @@ export const config = {
     matcher: [
         "/",
         "/sign-up",
+        "/verifyemail",
         "/log-in",
         "/log-out",
         "/profile",
