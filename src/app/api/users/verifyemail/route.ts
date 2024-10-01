@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
                 success: false,
                 message: "Invalid token"
             }, { status: 401 })
-        } else if (user.isVerified === true) {
+        } else {
             //NOTE - Update user details
             user.isVerified = true;
             user.verifyToken = undefined;
