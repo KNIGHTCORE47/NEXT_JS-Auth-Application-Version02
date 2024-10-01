@@ -2,16 +2,16 @@ import nodemailer from 'nodemailer'
 import User from '@/models/user.models'
 import bycryptjs from 'bcryptjs'
 import SMTPConnection from 'nodemailer/lib/smtp-connection';
-import { renderToString } from 'react-dom/server';
-import VerificationEmail from '@/../email/verificationEmail'
+// import { VerificationEmail } from '../../email/verificationEmail'
+// import { render } from '@react-email/render';
 
 
 
 export interface emailExport {
     email: string,
-    emailType: string,
+    emailType: "VERIFY" | "RESET",
     userId: string
-    verificationURL: string
+    verificationURL?: string
 }
 
 
@@ -32,22 +32,8 @@ export async function sendEmail({ email, emailType, userId }: emailExport) {
     if (
         !NEXT_PUBLIC_SMTP_HOST || !NEXT_PUBLIC_SMTP_PORT || !NEXT_PUBLIC_SMTP_AUTH_USERNAME || !NEXT_PUBLIC_SMTP_AUTH_PASSWORD
     ) {
+        console.log("Missing environment variables");
         throw new Error("Missing environment variables")
-    }
-
-    //NOTE - Check if email is valid
-    if (!email) {
-        throw new Error("Email is required")
-    }
-
-    //NOTE - Check if email type is valid
-    if (!emailType) {
-        throw new Error("Email type is required")
-    }
-
-    //NOTE - Check if userId is valid
-    if (!userId) {
-        throw new Error("User id is required")
     }
 
     try {
@@ -57,24 +43,37 @@ export async function sendEmail({ email, emailType, userId }: emailExport) {
         //NOTE - Get user from db by id and update it with new token and Check if user requested for forgot password or verification
         if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
-                verifyToken: hashedToken,
-                verifyTokenExpiry: Date.now() + 3600000
+                $set: {
+                    verifyToken: hashedToken,
+                    verifyTokenExpiry: Date.now() + 3600000
+                }
             })
         } else if (emailType === "RESET") {
             await User.findByIdAndUpdate(userId, {
-                forgotPasswordToken: hashedToken,
-                forgotPasswordExpiry: Date.now() + 3600000
+                $set: {
+                    forgotPasswordToken: hashedToken,
+                    forgotPasswordExpiry: Date.now() + 3600000
+                }
             })
         }
 
 
         //NOTE - Create verification/reset password URL
         const baseUrl = String(process.env.NEXT_PUBLIC_DOMAIN) || "http://localhost:3000"
-        const verificationURL = `${baseUrl}/${emailType === "VERIFY" ? "verify-email" : "reset-password"}?token=${hashedToken}`
 
-        const emailTemplate = renderToString(
-            VerificationEmail({ emailType, verificationURL, email, userId })
-        )
+        const verificationURL = `${baseUrl}/${emailType === "VERIFY" ? "verifyemail" : "resetpassword"}?token=${hashedToken}`
+
+        const emailContent = `
+            <p>Hello ${email}</p>
+            <p>Click <a href=${verificationURL}>Here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}</p>
+            <p>or</p>
+            <p>Click the link below to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}</p>
+            <a href=${verificationURL}>${verificationURL}</a>
+            `
+
+        // const emailHtml = render(
+        //     <VerificationEmail email={email} emailType={emailType} verificationURL={verificationURL}/>
+        // )
 
 
 
@@ -93,7 +92,8 @@ export async function sendEmail({ email, emailType, userId }: emailExport) {
             from: String(process.env.NEXT_PUBLIC_SMTP_AUTH_USERNAME) || "example@example.com",
             to: email,
             subject: emailType === "VERIFY" ? "Email verification" : "Reset forgot password",
-            html: emailTemplate
+            html: emailContent
+            // || emailHtml
         }
 
         const mailResponse = await transporter.sendMail(mailOptions)
