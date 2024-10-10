@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -120,6 +121,14 @@ export default function LogInPage() {
                                                 className='w-full'
                                                 placeholder="shadcn" {...field} />
                                         </FormControl>
+                                        <FormDescription>
+                                            <Link
+                                                href="/forgot-password"
+                                                className='hover:underline'
+                                            >
+                                                Forgot password?
+                                            </Link>
+                                        </FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
