@@ -143,8 +143,7 @@ export default function SignUpPage() {
 
                             <Button
                                 className="bg-gray-700 text-white hover:bg-gray-800
-                                focus:outline-none focus:border-gray-700 
-                                "
+                                focus:outline-none focus:border-gray-700"
                                 type="submit"
                             >
                                 {isSubmiting ? (
