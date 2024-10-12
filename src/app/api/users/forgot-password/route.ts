@@ -32,10 +32,12 @@ export async function POST(request: NextRequest) {
 
         if (existingUser) {
 
-            if (existingUser?.password === password) {
+            const isPasswordSame = await bycryptjs.compare(password, existingUser.password);
+
+            if (isPasswordSame) {
                 return NextResponse.json({
                     success: false,
-                    message: "Please provide different password",
+                    message: "New password must be different from the current password",
                 }, { status: 409 });
             }
 
@@ -48,8 +50,8 @@ export async function POST(request: NextRequest) {
             }
 
             //NOTE - Hash password
-            const salt = bycryptjs.genSaltSync(10);
-            const hashedPassword = bycryptjs.hashSync(password, salt);
+            const salt = await bycryptjs.genSaltSync(10);
+            const hashedPassword = await bycryptjs.hashSync(password, salt);
 
 
             //NOTE - Update user details
