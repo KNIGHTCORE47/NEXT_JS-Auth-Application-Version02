@@ -2,6 +2,7 @@ import { dbConnect } from "@/lib/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/user.models";
 import { sendEmail } from "@/helpers/nodeMailer";
+import bycryptjs from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -45,6 +46,16 @@ export async function POST(request: NextRequest) {
                 }, { status: 409 });
 
             }
+
+            //NOTE - Hash password
+            const salt = bycryptjs.genSaltSync(10);
+            const hashedPassword = bycryptjs.hashSync(password, salt);
+
+
+            //NOTE - Update user details
+            existingUser.password = hashedPassword;
+
+            await existingUser.save();
 
             //NOTE - Send email
             await sendEmail({
