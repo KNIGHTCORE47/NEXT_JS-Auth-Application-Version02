@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>New Password</FormLabel>
                                         <FormControl>
                                             <Input placeholder="shadcn" {...field} />
                                         </FormControl>
