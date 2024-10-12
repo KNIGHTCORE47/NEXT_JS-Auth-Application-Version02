@@ -11,6 +11,8 @@ export async function middleware(request: NextRequest) {
         currentUrl.pathname === "/sign-up" ||
         currentUrl.pathname === "/verifyemail" ||
         currentUrl.pathname === "/log-in" ||
+        currentUrl.pathname === "/forgot-password" ||
+        currentUrl.pathname === "/resetpassword" ||
         currentUrl.pathname === "/log-out"
     )
     ) {
@@ -35,6 +37,8 @@ export const config = {
         "/sign-up",
         "/verifyemail",
         "/log-in",
+        "/forgot-password",
+        "/resetpassword",
         "/log-out",
         "/profile",
     ]
