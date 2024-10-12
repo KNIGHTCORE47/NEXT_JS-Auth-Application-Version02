@@ -1,11 +1,10 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { z as zod } from 'zod'
 import { forgotPasswordSchema as fgPassSchema } from '@/schemas/forgotPasswordSchema'
-import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
